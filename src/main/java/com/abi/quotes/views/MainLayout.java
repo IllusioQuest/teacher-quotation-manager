@@ -79,14 +79,13 @@ public class MainLayout extends AppLayout {
 	
 	private HorizontalLayout userDisplay;
 	private Button navButton;
-	public TimetableNav timetableNav;
 	
 	private VerticalLayout moreButton;
+	
+	public TimetableNav timetableNav;
+	
 	private boolean moreButtonHasUserMenu = false;
 	private Registration moreReg;
-
-	private Div layout;
-
 
     /**
      * A simple navigation item component, based on ListItem element.
@@ -128,7 +127,7 @@ public class MainLayout extends AppLayout {
         addToNavbar(createHeaderContent());
         cookieLogin();
         //updateUserSpan();
-		getElement().executeJs("document.documentElement.setAttribute('theme', $0)", (DataManager.getDarkMode()) ? Lumo.DARK : Lumo.LIGHT);
+        
     }
 
     private Header header;
@@ -137,7 +136,7 @@ public class MainLayout extends AppLayout {
         header = new Header();
         header.addClassNames(BoxSizing.BORDER, Display.FLEX, FlexDirection.COLUMN, Width.FULL);
 
-        layout = new Div();
+        Div layout = new Div();
         layout.addClassNames(Display.FLEX, AlignItems.CENTER, Padding.Horizontal.LARGE);
 
         /*HorizontalLayout homeLayout = new HorizontalLayout();
@@ -182,6 +181,24 @@ public class MainLayout extends AppLayout {
         return header;
     }
     
+    public void updateMoreButton() {
+    	if (DataManager.getLoggedIn() == null || !DataManager.getLoggedIn()) {
+        	((Span) moreButton.getComponentAt(1)).setText("Anmelden");
+        	if (moreReg == null)
+	        	moreReg = moreButton.addClickListener(e -> {
+	        		getUI().ifPresent(ui -> ui.navigate(LoginView.class));
+	        	});
+        } else {
+        	if (moreReg != null)
+        		moreReg.remove();
+        	((Span) moreButton.getComponentAt(1)).setText("Mehr");
+        	if (!moreButtonHasUserMenu) {
+        		createUserMenu(moreButton);
+        		moreButtonHasUserMenu = true;
+        	}
+        }
+    }
+    
     private VerticalLayout createNavButton(String name, Icon icon, String target) {
     	
     	VerticalLayout layout = new VerticalLayout();
@@ -212,30 +229,9 @@ public class MainLayout extends AppLayout {
 
         };
     }
-
-	public void updateMoreButton() {
-		if (DataManager.getLoggedIn() == null || !DataManager.getLoggedIn()) {
-			layout.remove(moreButton);
-			((Span) moreButton.getComponentAt(1)).setText("Anmelden");
-			if (moreReg == null) {
-				moreReg = moreButton.addClickListener(e -> {
-					getUI().ifPresent(ui -> ui.navigate(LoginView.class));
-				});
-			}
-		}
-		else {
-			layout.add(moreButton);
-			if (moreReg != null)
-				moreReg.remove();
-			((Span) moreButton.getComponentAt(1)).setText("Mehr");
-			if (!moreButtonHasUserMenu) {
-				createUserMenu(moreButton);
-				moreButtonHasUserMenu = true;
-			}
-		}
-	}
-
+    
     public void updateUserSpan() {
+    	
     	if (userDisplay != null)
     		header.remove(userDisplay);
     	
@@ -264,13 +260,7 @@ public class MainLayout extends AppLayout {
     	header.addComponentAtIndex(1, userDisplay);
     }
 
-
 	// THE ContextMenu
-	/**
-	 * Creates the ContextMenu you see when clicking either the user span or the more button
-	 * @param userSpan The component (userspan or more button) to open next to when said component is clicked
-	 * @return The ContextMenu
-	 */
     private ContextMenu createUserMenu(Component userSpan) {
 		// The wastebin:
 		//logoutButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
@@ -318,23 +308,6 @@ public class MainLayout extends AppLayout {
 		logoutButton.getStyle().set("padding-left", "10px").set("padding-right", "30px");
 
 
-		// break line
-		menu.add(new Hr());
-
-		// "Themes: " text
-		menu.addItem("  " + "Themes: ");
-
-		// the theme buttons
-		int themeAmount = 2 ; // actual amount of themes
-		for (int i = 0; i < themeAmount; i++) {
-			createThemeButton(menu, i);
-		}
-
-		// break line
-		menu.add(new Hr());
-
-
-		/*
 		// themes button with submenu
 		MenuItem themeButton = menu.addItem("  " + "Themes");
 		Icon themeIcon = VaadinIcon.PAINTBRUSH.create();
@@ -357,7 +330,7 @@ public class MainLayout extends AppLayout {
 		});
 		MenuItem dmButtonMenuItem = themeMenu.addItem(darkModeButton);
 		dmButtonMenuItem.getStyle().set("padding-right", "30px");
-		*/
+
 
 		// profile button
 		MenuItem profileButton = menu.addItem("  " + "Dein Profil", event -> {
@@ -469,46 +442,7 @@ public class MainLayout extends AppLayout {
         	
     	return menu;
     }
-
-	private void createThemeButton(ContextMenu menu, int i) {
-		MenuItem themeButton;
-		Icon themeIcon = VaadinIcon.STOP.create();
-
-		themeIcon.setSize("var(--lumo-icon-size-s)");
-		themeIcon.getStyle().set("padding", "0.10em");
-
-		switch (i) {
-			case 0:
-				themeButton = menu.addItem("  " + "Light Mode", event -> {
-					setDarkMode(false);
-				});
-				themeIcon.getStyle().set("color", "hsl(214, 35%, 99%)");
-				break;
-			case 1:
-				themeButton = menu.addItem("  " + "Dark Mode", event -> {
-					setDarkMode(true);
-				});
-				themeIcon.getStyle().set("color", "hsl(214, 35%, 21%)");
-				break;
-			case 2:
-				themeButton = menu.addItem("  " + "Pitch Black", event -> {  // not yet implemented, hopefully soon
-					setDarkMode(true);
-				});
-				themeIcon.getStyle().set("color", "hsl(214, 35%, 0%)");
-				break;
-			default:
-				themeButton = menu.addItem("  " + "Unnamed Theme", event -> {
-					// setTheme(0);
-				});
-				themeIcon.getStyle().set("color", "hsl(214, 35%, 69%)");
-				break;
-		}
-
-		themeButton.addComponentAsFirst(themeIcon);
-		themeButton.getStyle().set("padding-left", "10px").set("padding-right", "30px");
-	}
-
-
+    
     public void setDarkMode(boolean dark) {
     	User.updateNumber(DataManager.getUserID(), "user_darkMode", (dark) ? "1" : "0");
     	DataManager.setDarkMode(dark);
