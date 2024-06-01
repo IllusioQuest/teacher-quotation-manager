@@ -85,7 +85,7 @@ public class MainLayout extends AppLayout {
 	private HorizontalLayout userDisplay;
 	private Button navButton;
 	public TimetableNav timetableNav;
-	
+
 	private VerticalLayout moreButton;
 	private boolean moreButtonHasUserMenu = false;
 	private Registration moreReg;
