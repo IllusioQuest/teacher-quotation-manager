@@ -254,8 +254,7 @@ public class MainLayout extends AppLayout {
     	userDisplay.add(userSpan, navButton);
     	header.addComponentAtIndex(1, userDisplay);
     }
-
-	// THE ContextMenu
+    
     private ContextMenu createUserMenu(Component userSpan) {
     	ContextMenu menu = new ContextMenu();
     	
