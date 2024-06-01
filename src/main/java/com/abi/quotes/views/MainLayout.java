@@ -596,7 +596,7 @@ public class MainLayout extends AppLayout {
 		return new Component[] {comp1, comp2, comp3, comp4, comp5};
 	}
 
-    
+
     public static void cookieLogin() {
     	Cookie[] cookies = VaadinRequest.getCurrent().getCookies();
     	
