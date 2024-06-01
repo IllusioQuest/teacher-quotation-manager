@@ -186,7 +186,7 @@ public class MainLayout extends AppLayout {
         header.add(layout);
         return header;
     }
-    
+
     private VerticalLayout createNavButton(String name, Icon icon, String target) {
     	
     	VerticalLayout layout = new VerticalLayout();
