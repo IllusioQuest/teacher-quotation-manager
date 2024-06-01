@@ -8,7 +8,6 @@ import com.abi.quotes.views.profil.ProfilView;
 import com.abi.quotes.views.start.StartView;
 import com.abi.quotes.views.users.UsersView;
 import com.abi.quotes.views.zitate.ZitateView;
-
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
@@ -16,11 +15,6 @@ import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
-import com.vaadin.flow.component.contextmenu.SubMenu;
-import com.vaadin.flow.component.contextmenu.MenuItem;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
@@ -30,11 +24,12 @@ import com.vaadin.flow.component.html.ListItem;
 import com.vaadin.flow.component.html.Nav;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.html.UnorderedList;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.VaadinRequest;
@@ -262,20 +257,19 @@ public class MainLayout extends AppLayout {
 
 	// THE ContextMenu
     private ContextMenu createUserMenu(Component userSpan) {
-		// The wastebin:
-		//logoutButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
-
-    	/* Button logoutButton = new Button("Abmelden");
+    	ContextMenu menu = new ContextMenu();
+    	
+    	Button logoutButton = new Button("Abmelden");
     	logoutButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
     	logoutButton.addClickListener(e -> {
-    		DataManager.logout();
-    		getUI().ifPresent(ui -> ui.navigate("start"));
+    		DataManager.logout(); 
+    		getUI().ifPresent(ui -> ui.navigate("start")); 
     		updateUserSpan();
     		updateMoreButton();
     		}
     	);
-    	menu.addItem(logoutButton); */
-    	/*
+    	menu.addItem(logoutButton);
+    	
     	boolean darkMode = DataManager.getDarkMode();
     	setDarkMode(darkMode);
     	Button darkModeButton = new Button((darkMode) ? "Light Mode" : "Dark Mode");
@@ -285,108 +279,8 @@ public class MainLayout extends AppLayout {
     		setDarkMode(!DataManager.getDarkMode());
     		darkModeButton.setText((DataManager.getDarkMode()) ? "Light Mode" : "Dark Mode");
     	});
-    	MenuItem dmButtonMenuItem = menu.addItem(darkModeButton);
-		dmButtonMenuItem.getStyle().set("padding-right", "30px");
-		*/
-
-		// initialise ContextMenu
-    	ContextMenu menu = new ContextMenu();
-
-		// logout button
-		MenuItem logoutButton = menu.addItem("  " + "Abmelden", event -> {
-			DataManager.logout();
-			getUI().ifPresent(ui -> ui.navigate("start"));
-			updateUserSpan();
-			updateMoreButton();
-		});
-		Icon logoutIcon = VaadinIcon.SIGN_OUT.create();
-		logoutIcon.setSize("var(--lumo-icon-size-s)");
-		logoutIcon.getStyle().set("padding", "0.10em");
-
-		logoutButton.addComponentAsFirst(logoutIcon);
-		logoutButton.setClassName("text-error");
-		logoutButton.getStyle().set("padding-left", "10px").set("padding-right", "30px");
-
-
-		// themes button with submenu
-		MenuItem themeButton = menu.addItem("  " + "Themes");
-		Icon themeIcon = VaadinIcon.PAINTBRUSH.create();
-		themeIcon.setSize("var(--lumo-icon-size-s)");
-		themeIcon.getStyle().set("padding", "0.10em");
-		themeButton.addComponentAsFirst(themeIcon);
-
-		// initialise submenu
-		SubMenu themeMenu = themeButton.getSubMenu();
-
-		// light/dark mode button
-		boolean darkMode = DataManager.getDarkMode();
-		setDarkMode(darkMode);
-		Button darkModeButton = new Button((darkMode) ? "Light Mode" : "Dark Mode");
-		darkModeButton.setIcon((darkMode) ? VaadinIcon.SUN_O.create() : VaadinIcon.MOON_O.create());
-		darkModeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_CONTRAST);
-		darkModeButton.addClickListener(e -> {
-			setDarkMode(!DataManager.getDarkMode());
-			darkModeButton.setText((DataManager.getDarkMode()) ? "Light Mode" : "Dark Mode");
-		});
-		MenuItem dmButtonMenuItem = themeMenu.addItem(darkModeButton);
-		dmButtonMenuItem.getStyle().set("padding-right", "30px");
-
-
-		// profile button
-		MenuItem profileButton = menu.addItem("  " + "Dein Profil", event -> {
-			getUI().ifPresent(ui -> ui.navigate("profil"));
-		});
-		Icon profileIcon = VaadinIcon.USER.create();
-		profileIcon.setSize("var(--lumo-icon-size-s)");
-		profileIcon.getStyle().set("padding", "0.10em");
-
-		profileButton.addComponentAsFirst(profileIcon);
-		profileButton.getStyle().set("padding-left", "10px").set("padding-right", "30px");
-
-
-		// users button (admin-only)
-		if (DataManager.isAdmin()) {
-			MenuItem usersButton = menu.addItem("  " + "Nutzerverwaltung", event -> {
-				getUI().ifPresent(ui -> ui.navigate("nutzer"));
-			});
-			Icon usersIcon = VaadinIcon.USERS.create();
-			usersIcon.setSize("var(--lumo-icon-size-s)");
-			usersIcon.getStyle().set("padding", "0.10em");
-
-			usersButton.addComponentAsFirst(usersIcon);
-			usersButton.getStyle().set("color", "var(--lumo-warning-text-color)");  // yellow warning text color
-			usersButton.getStyle().set("padding-left", "10px").set("padding-right", "30px");
-		}
-
-		// help button
-		MenuItem helpButton = menu.addItem("  " + "Hilfe", event -> {
-			new HasHelp() {
-				@Override
-				public Component[] getPages() {
-					return new StartView().getPages();
-				}
-			}.openHelp();
-		});
-		Icon helpIcon = VaadinIcon.QUESTION.create();
-		helpIcon.setSize("var(--lumo-icon-size-s)");
-		helpIcon.getStyle().set("padding", "0.10em");
-
-		helpButton.addComponentAsFirst(helpIcon);
-		helpButton.getStyle().set("padding-left", "10px").set("padding-right", "30px");
-
-
-		// privacy policy button
-		MenuItem privacyButton = menu.addItem("  " + "Datenschutz", event -> {
-			getUI().ifPresent(ui -> ui.navigate("privacypolicy"));
-		});
-		Icon privacyIcon = VaadinIcon.LOCK.create();
-		privacyIcon.setSize("var(--lumo-icon-size-s)");
-		privacyIcon.getStyle().set("padding", "0.10em");
-
-		privacyButton.addComponentAsFirst(privacyIcon);
-		privacyButton.getStyle().set("padding-left", "10px").set("padding-right", "30px");
-
-		/*
+    	menu.addItem(darkModeButton);
+    	
     	Button profileButton = new Button("Dein Profil");
     	profileButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
     	profileButton.addClickListener(e -> {
@@ -402,7 +296,7 @@ public class MainLayout extends AppLayout {
             });
     		menu.addItem(usersButton);
     	}
-
+    	
     	Button helpButton = new Button("Hilfe");
     	helpButton.setIcon(VaadinIcon.QUESTION.create());
     	helpButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
@@ -435,7 +329,7 @@ public class MainLayout extends AppLayout {
     		} catch (IOException e1) {e1.printStackTrace();}
     	});
     	menu.addItem(dataProtectionButton);
-    	*/
+    	
     	
     	menu.setOpenOnClick(true);
     	menu.setTarget(userSpan);
