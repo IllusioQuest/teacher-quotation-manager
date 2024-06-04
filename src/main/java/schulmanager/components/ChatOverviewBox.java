@@ -93,7 +93,7 @@ public class ChatOverviewBox extends HorizontalLayout implements CalendarCalc {
 
 		// ContextMenu button
 		Button menuButton = new Button(VaadinIcon.ELLIPSIS_DOTS_V.create());
-		menuButton.getStyle().set("padding-bottom", "10px").set("padding-top", "10px");
+		menuButton.getStyle().set("padding-bottom", "10px").set("padding-top", "10px").set("padding-right", "5px");
 		menuButton.addThemeVariants(/*ButtonVariant.LUMO_SMALL, */ButtonVariant.LUMO_TERTIARY);
 		createChatOptionsMenu(menuButton);
 		menuButton.setEnabled(false);  // disabled for now
