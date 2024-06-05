@@ -178,8 +178,8 @@ span.origi, span.origi > b {
 
 .header-top {
   background-color: var(--lumo-base-color);
-  position: sticky;
-  position: -webkit-sticky;
+  position: fixed;
+  position: -webkit-fixed;
   top: 0;
   width: 110%;
   z-index: 10;
@@ -200,6 +200,8 @@ span.origi, span.origi > b {
    font-size: 16px;
    font-family: "Noto Sans Tamil Supplement", sans-serif;
    line-height: var(--lumo-line-height-s);
+   overflow: hidden;
+   text-overflow: ellipsis;
 }
 
 .bubble:after
@@ -252,6 +254,8 @@ span.origi, span.origi > b {
    font-size: 16px;
    font-family: "Noto Sans Tamil Supplement", sans-serif;
    line-height: var(--lumo-line-height-s);
+   overflow: hidden;
+   text-overflow: ellipsis;
 }
 
 .self-bubble:after

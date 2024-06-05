@@ -1,8 +1,14 @@
 package com.abi.quotes.views.chat_detail;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -12,6 +18,7 @@ import com.abi.quotes.views.MainLayout;
 import com.abi.quotes.views.beta_test.SmView;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
@@ -81,6 +88,8 @@ public class ChatDetailView extends SmView implements HasDynamicTitle, HasUrlPar
 	private int screenWidth;
 	private boolean bigScreen;
 
+	
+	private ArrayList<String> uploadedFiles;
 	
 	//@Override
 	public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
@@ -239,7 +248,12 @@ public class ChatDetailView extends SmView implements HasDynamicTitle, HasUrlPar
 		innerLayout.addComponentAsFirst(dateDisplay);
 		innerLayout.setHorizontalComponentAlignment(Alignment.CENTER, dateDisplay);
 		
+		Div bottomAnchor = new Div();
+		innerLayout.add(bottomAnchor);;
+		
 		add(innerLayout);
+		
+		bottomAnchor.scrollIntoView();
 		
 	}
 	
@@ -316,7 +330,7 @@ public class ChatDetailView extends SmView implements HasDynamicTitle, HasUrlPar
 			attachmentButton.addClickListener(e -> {
 				toggleUpload(outerContainer);
 			});
-			attachmentButton.setEnabled(false); //TODO
+			attachmentButton.setEnabled(true); //TODO
 			
 			TextArea area = new TextArea();
 			area.setWidthFull();
@@ -352,6 +366,8 @@ public class ChatDetailView extends SmView implements HasDynamicTitle, HasUrlPar
 	private void toggleUpload(VerticalLayout container) {
 		
 		if (upload == null) {
+			
+			uploadedFiles = new ArrayList<String>();
 		
 			/*Dialog uploadDialog = new Dialog();
 			uploadDialog.setHeaderTitle("Anhänge hochladen");
@@ -363,6 +379,20 @@ public class ChatDetailView extends SmView implements HasDynamicTitle, HasUrlPar
 			MultiFileBuffer buffer = new MultiFileBuffer();
 			Upload uploadComponent = new Upload(buffer);
 			uploadComponent.setI18n(getUploadI18n());
+			
+			add(new Html("<style>vaadin-upload-file {padding: 0;}y/style>"));
+			
+			//File successfully uploaded
+			uploadComponent.addSucceededListener(e -> {
+				uploadedFiles.add(e.getFileName());
+			});
+			//File removed via clear button
+			uploadComponent.getElement().addEventListener("file-remove", event -> {
+				  elemental.json.JsonObject eventData = event.getEventData();
+				  uploadedFiles.remove(eventData.getString("event.detail.file.name"));
+				  for (String s : uploadedFiles) System.out.println(s);
+				}).addEventData("event.detail.file.name");
+			
 	
 			/*Button uploadButton = new Button("Anhängen", e -> {
 				handleUploads(buffer);
@@ -386,10 +416,6 @@ public class ChatDetailView extends SmView implements HasDynamicTitle, HasUrlPar
 			upload = null;
 		}
 		
-	}
-	
-	private void handleUploads(MultiFileBuffer buffer) {
-		//buffer.
 	}
 
 	protected void initialise() {}

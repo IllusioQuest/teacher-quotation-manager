@@ -8,6 +8,7 @@ import com.abi.quotes.views.profil.ProfilView;
 import com.abi.quotes.views.pushtest.PushTestView;
 import com.abi.quotes.views.student_quote.StudentQuoteView;
 import com.abi.quotes.views.teacher.TeacherView;
+import com.abi.quotes.views.uploadtest.FileProcessorView;
 import com.abi.quotes.views.users.UsersView;
 import com.abi.quotes.views.zitate.ZitateView;
 import com.vaadin.flow.component.Component;
@@ -174,9 +175,12 @@ public class StartView extends VerticalLayout implements HasHelp {
         newQuoteButton.getStyle().set("font-weight", "bold");
         newQuoteButton.setQuoteCreationListener(() -> list.update());
         
-        Button nutzerverwaltungButton;
-
-		Button testsButton;
+      
+        Button nutzerverwaltungButton = createNavigationButton("Nutzerverwaltung", UsersView.class);
+        nutzerverwaltungButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
+        
+        Button testsButton = createNavigationButton("Neues Zeug testen", FileProcessorView.class);
+        testsButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
 
 
         VerticalLayout buttonsLayout = new VerticalLayout(firstRow, new HorizontalLayout(zitateNachLehrerButton, schuelerZitateButton), newQuoteButton);
