@@ -133,7 +133,9 @@ public class MainLayout extends AppLayout {
         addToNavbar(createHeaderContent());
         cookieLogin();
         //updateUserSpan();
-		getElement().executeJs("document.documentElement.setAttribute('theme', $0)", (DataManager.getDarkMode()) ? Lumo.DARK : Lumo.LIGHT);
+		if (DataManager.getLoggedIn() != null && DataManager.getLoggedIn()) {
+			getElement().executeJs("document.documentElement.setAttribute('theme', $0)", (DataManager.getDarkMode()) ? Lumo.DARK : Lumo.LIGHT);
+		}
     }
 
     private Header header;
