@@ -77,6 +77,10 @@ public class ChatDetailView extends SmView implements HasDynamicTitle, HasUrlPar
 	private Upload upload;
 	
 	private VerticalLayout innerLayout;
+
+	private int screenWidth;
+	private boolean bigScreen;
+
 	
 	//@Override
 	public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
@@ -111,20 +115,35 @@ public class ChatDetailView extends SmView implements HasDynamicTitle, HasUrlPar
 	}
 
 
+	public void init() {
+		
+		//getScreenWidth();
+		createHeader();
+		createMessagesList();
+		createMessageBar();
+
+	}
+
+
 	//@Override
 	public String getPageTitle() {
 		return title;
 	}
 
 
-	public void init() {
-		
-		createHeader();
-		createMessagesList();
-		createMessageBar();
-		
+	/*
+	private synchronized void createAttach() {
+		UI.getCurrent().getPage().retrieveExtendedClientDetails(receiver -> {
+			screenWidth = receiver.getScreenWidth();
+			bigScreen = screenWidth > 900;
+			System.out.println("Screen width: " + screenWidth);
+		});
+		for (int i = 0; i < attachments.size(); i++) {
+			bubbleLayout.add(new AttachmentDisplay(attachments.get(i).getAsJsonObject(), getScreenWidth()));
+		}
 	}
-	
+	*/
+
 	private void createHeader() {
 		HorizontalLayout header = new HorizontalLayout();
 		header.setWidthFull();
@@ -249,14 +268,22 @@ public class ChatDetailView extends SmView implements HasDynamicTitle, HasUrlPar
 		timeSpan.getStyle().set("font-size", "10px");
 
 		bubbleLayout.add(senderSpan, messageText);
-		
-		for (int i = 0; i < attachments.size(); i++) {
-			bubbleLayout.add(new AttachmentDisplay(attachments.get(i).getAsJsonObject()));
+
+		if (attachments.size() > 0) {
+			// Copied from BetaTestView
+			UI.getCurrent().getPage().retrieveExtendedClientDetails(receiver -> {
+				screenWidth = receiver.getScreenWidth();
+				//System.out.println("Screen width: " + screenWidth);
+
+				for (int i = 0; i < attachments.size(); i++) {
+					bubbleLayout.add(new AttachmentDisplay(attachments.get(i).getAsJsonObject(), screenWidth));
+				}
+
+				bubbleLayout.add(timeSpan);
+				bubbleLayout.setHorizontalComponentAlignment(Alignment.END, timeSpan);
+			});
 		}
-		
-		bubbleLayout.add(timeSpan);
-		bubbleLayout.setHorizontalComponentAlignment(Alignment.END, timeSpan);
-	
+
 		box.add(bubbleLayout);
 		return box;
 	}

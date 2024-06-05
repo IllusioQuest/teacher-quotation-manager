@@ -16,11 +16,16 @@ public class AttachmentDisplay extends VerticalLayout {
 
 	private String requestUrl, fileType, fileName;
 	private int id;
+
+	private int screenWidth;
 	
-	public AttachmentDisplay (JsonObject attachment) {
+	public AttachmentDisplay (JsonObject attachment, int screenWidth) {
 		setPadding(false);
 		setSpacing(false);
 		setMargin (false);
+		getStyle().set("padding-bottom", "4px").set("padding-top", "4px");
+
+		this.screenWidth = screenWidth;
 		
 		id = attachment.get("id").getAsInt();
 		
@@ -123,14 +128,67 @@ public class AttachmentDisplay extends VerticalLayout {
 			type = "doc";
 		
 		String imageUrl = "images/" + type + ".svg";
-		
+
+
 		Anchor a = new Anchor(requestUrl);
-		Image img = new Image(imageUrl, "Unb. Dateityp");
+		Image img = new Image(imageUrl, "kein Icon");
 		img.setHeight("45px");
-		layout.add(img, new Span(fileName + "\""));
+
+		//Span fileNameSpan = createFileNameSpan(layout, fileName);
+		layout.add(img, createFileNameSpan(fileName + "\"") );
 		a.add(layout);
 		
 		add(a);
 	}
+
+	/**
+	 * Originally called "shortenFileName". This method was originally supposed to just shorten the given file name
+	 * and to create a second line with \n if nessesary to show atleast a little more of the file name before shortening
+	 * it with "...", but due to some weird bugs when putting \n into a span, a workaround of creating a VerticalLayout
+	 * with one or two spans is a seemingly nessesary workaround...
+	 * @param name The file name
+	 * @return The VerticalLayout containing either 1 or 2 Spans
+	 */
+	private VerticalLayout createFileNameSpan(String name) {
+		// figured out emperialistically by using 150, 250, 350, 450 and 550 px as screen width
+		int newCharCount = (screenWidth - 100) / 10;
+		VerticalLayout layout = new VerticalLayout();
+		layout.setPadding(false);
+		layout.setSpacing(false);
+		layout.setMargin(false);
+
+		// debugging using console output
+		// System.out.println("Screen width: " + screenWidth);
+		// System.out.println("newCharCount: " + newCharCount);
+		// System.out.println("name Length: " + name.length());
+		// System.out.println("name: " + name);
+
+		if (newCharCount < 5 || name.length() < 5) {
+			layout.add(new Span(name));
+			return layout;
+		}
+
+		// if the filename is longer than the first line and therefore a second line is needed
+		if (name.length() > newCharCount) {
+			layout.add(new Span(name.substring(0, newCharCount - 1)));
+
+			// if the filename is even longer than 2 lines
+			if (name.length() > newCharCount * 2) {
+				layout.add(new Span(name.substring(newCharCount - 1, newCharCount * 2 - 1) + " ..."));
+			}
+
+			// if the filename is not longer than the second line
+			else {
+				layout.add(new Span(name.substring(newCharCount - 1, name.length())));
+			}
+		}
+		// filename longer than 4 characters but also not long enough for a second line
+		else {
+			layout.add(new Span(name));
+		}
+
+		return layout;
+	}
+
 	
 }
